@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane
+        maxHeight="-Infinity" maxWidth="-Infinity"
+        minHeight="-Infinity" minWidth="-Infinity"
+        prefHeight="609.0" prefWidth="338.0"
+        xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="main.Controller">
+   <children>
+      <AnchorPane
+              fx:id="background"
+              onMouseDragged="#windowDragEvent"
+              onMousePressed="#windowPressEvent"
+              prefHeight="610.0" prefWidth="338.0"
+              style="-fx-background-color: #6BA4B8;">
+         <children>
+            <ImageView
+                    id="playIcon" fx:id="play"
+                    fitHeight="28.0" fitWidth="28.0"
+                    layoutX="156.0" layoutY="489.0"
+                    onMouseClicked="#playClickAction">
+               <image>
+                  <Image url="@resources/play.png" />
+               </image>
+            </ImageView>
+            <ImageView
+                    fx:id="next"
+                    fitHeight="28.0" fitWidth="28.0"
+                    layoutX="223.0" layoutY="489.0">
+               <image>
+                  <Image url="@resources/rightarrow.png" />
+               </image>
+            </ImageView>
+            <ImageView
+                    fx:id="last"
+                    fitHeight="28.0" fitWidth="28.0"
+                    layoutX="85.0" layoutY="490.0">
+               <image>
+                  <Image url="@resources/leftarrow.png" />
+               </image>
+            </ImageView>
+            <ImageView
+                    fx:id="menu"
+                    fitHeight="28.0" fitWidth="28.0"
+                    layoutX="14.0" layoutY="14.0"
+                    onMouseClicked="#menuClickEvent">
+               <image>
+                  <Image url="@resources/headlines.png" />
+               </image>
+            </ImageView>
+            <ImageView
+                    fx:id="close"
+                    fitHeight="28.0" fitWidth="28.0"
+                    layoutX="294.0" layoutY="14.0"
+                    onMouseClicked="#closeClickEvent">
+               <image>
+                  <Image url="@resources/close.png" />
+               </image>
+            </ImageView>
+            <Label
+                    fx:id="message"
+                    alignment="CENTER"
+                    contentDisplay="CENTER"
+                    layoutX="25.0" layoutY="433.0"
+                    prefHeight="43.0" prefWidth="292.0"
+                    text="hello"
+                    textAlignment="CENTER">
+               <font>
+                  <Font name="Apple Braille" size="13.0" />
+               </font>
+            </Label>
+            <ProgressBar
+                    fx:id="progress"
+                    layoutX="70.0" layoutY="535.0"
+                    prefHeight="18.0" prefWidth="200.0"
+                    progress="0.0">
+               <cursor>
+                  <Cursor
+                          fx:constant="CLOSED_HAND" />
+               </cursor>
+            </ProgressBar>
+            <MediaView
+                    fx:id="mv"
+                    fitHeight="200.0" fitWidth="200.0"
+                    layoutX="51.0" layoutY="132.0"
+                    onMouseClicked="#duckClickEvent" />
+            <Label
+                    fx:id="info"
+                    alignment="CENTER"
+                    contentDisplay="CENTER"
+                    layoutX="91.0" layoutY="268.0"
+                    prefHeight="18.0" prefWidth="160.0" />
+            <Pane
+                    fx:id="infoPane"
+                    layoutX="59.0" layoutY="143.0"
+                    prefHeight="200.0" prefWidth="211.0">
+               <children>
+                  <ImageView
+                          fx:id="bubble"
+                          fitHeight="59.0" fitWidth="61.0"
+                          layoutX="42.0" layoutY="34.0">
+                     <image>
+                        <Image url="@resources/dialog.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView
+                          id="rubberDuck"
+                          fx:id="rubberDuck"
+                          fitHeight="256.0" fitWidth="255.0"
+                          layoutX="-22.0" layoutY="-35.0"
+                          onMouseClicked="#duckClickEvent">
+                     <image>
+                        <Image url="@resources/rubber-duck.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+         </children></AnchorPane>
+   </children>
+</AnchorPane>
