@@ -30,7 +30,7 @@
                     layoutX="156.0" layoutY="489.0"
                     onMouseClicked="#playClickAction">
                <image>
-                  <Image url="@resources/play.png" />
+                  <Image url="@resources/images/play.png" />
                </image>
             </ImageView>
             <ImageView
@@ -38,7 +38,7 @@
                     fitHeight="28.0" fitWidth="28.0"
                     layoutX="223.0" layoutY="489.0">
                <image>
-                  <Image url="@resources/rightarrow.png" />
+                  <Image url="@resources/images/rightarrow.png" />
                </image>
             </ImageView>
             <ImageView
@@ -46,7 +46,7 @@
                     fitHeight="28.0" fitWidth="28.0"
                     layoutX="85.0" layoutY="490.0">
                <image>
-                  <Image url="@resources/leftarrow.png" />
+                  <Image url="@resources/images/leftarrow.png" />
                </image>
             </ImageView>
             <ImageView
@@ -55,7 +55,7 @@
                     layoutX="14.0" layoutY="14.0"
                     onMouseClicked="#menuClickEvent">
                <image>
-                  <Image url="@resources/headlines.png" />
+                  <Image url="@resources/images/headlines.png" />
                </image>
             </ImageView>
             <ImageView
@@ -64,7 +64,7 @@
                     layoutX="294.0" layoutY="14.0"
                     onMouseClicked="#closeClickEvent">
                <image>
-                  <Image url="@resources/close.png" />
+                  <Image url="@resources/images/close.png" />
                </image>
             </ImageView>
             <Label
@@ -110,7 +110,7 @@
                           fitHeight="59.0" fitWidth="61.0"
                           layoutX="42.0" layoutY="34.0">
                      <image>
-                        <Image url="@resources/dialog.png" />
+                        <Image url="@resources/images/dialog.png" />
                      </image>
                   </ImageView>
                   <ImageView
@@ -120,7 +120,7 @@
                           layoutX="-22.0" layoutY="-35.0"
                           onMouseClicked="#duckClickEvent">
                      <image>
-                        <Image url="@resources/rubber-duck.png" />
+                        <Image url="@resources/images/rubber-duck.png" />
                      </image>
                   </ImageView>
                </children>

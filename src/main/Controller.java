@@ -124,11 +124,6 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("WAV", "*.wav")
         );
         //File file = fileChooser.showOpenDialog(stage);
-        if (list != null) {
-            for (File f : list) {
-                System.out.println(f.getName());
-            }
-            }
         /*
         if (file != null) {
             song = file.getName();
