@@ -16,5 +16,5 @@ Able to play mp4 format but only sound.
 
 ## ScreenShot
 
-<img src="https://github.com/veloXtime/MusicPlayer/blob/master/screenshot/screenshot.png" width="500" height="auto">
+<img src="https://github.com/veloXtime/MusicPlayer/blob/master/screenshot/screenshot.png" width="300" height="auto">
 
