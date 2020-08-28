@@ -58,12 +58,8 @@ public class MediaList {
         return "";
     }
 
-    public void incCurnInd() {
-        ++curnInd;
-    }
-
-    public void decCurnInd() {
-        --curnInd;
+    public void changeCurnInd(int indChange) {
+        curnInd += indChange;
     }
 
     public boolean testValidity() {

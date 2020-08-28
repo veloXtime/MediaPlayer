@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Cursor?>
+<?import com.jfoenix.controls.JFXSlider?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -44,11 +43,6 @@
                   <Font name="Apple Braille" size="13.0" />
                </font>
             </Label>
-            <ProgressBar fx:id="progress" layoutX="70.0" layoutY="535.0" prefHeight="18.0" prefWidth="200.0" progress="0.0">
-               <cursor>
-                  <Cursor fx:constant="CLOSED_HAND" />
-               </cursor>
-            </ProgressBar>
             <MediaView fx:id="mv" fitHeight="200.0" fitWidth="200.0" layoutX="51.0" layoutY="132.0" onMouseClicked="#duckClickEvent" />
             <Label fx:id="info" alignment="CENTER" contentDisplay="CENTER" layoutX="91.0" layoutY="268.0" prefHeight="18.0" prefWidth="160.0" />
             <Pane fx:id="infoPane" layoutX="59.0" layoutY="143.0" prefHeight="200.0" prefWidth="211.0">
@@ -65,6 +59,7 @@
                   </ImageView>
                </children>
             </Pane>
+            <JFXSlider fx:id="slider" layoutX="74.0" layoutY="534.0" prefHeight="24.0" prefWidth="192.0" value="0.0" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

@@ -1,19 +1,26 @@
 package main;
 
+import com.jfoenix.controls.JFXSlider;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.net.URL;
@@ -21,6 +28,7 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
+    @FXML private JFXSlider slider;
     @FXML private Pane infoPane;
     @FXML private AnchorPane background;
     @FXML private ImageView last;
@@ -37,29 +45,39 @@ public class Controller implements Initializable {
 
     private MediaPlayer mp;
     private Media me;
-    private String path = new File("/Users/velox/Desktop/MusicPlayer/src/main/resources/media/L2-5.mp4").getAbsolutePath();
-
     private int playStatus = 0;
     private int infoStatus = 0;
     private String songName = "";
     private String songPath = "";
     private MediaList mediaList;
+    private Duration duration;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            // default
-            // path = new File("/Users/velox/Desktop/MusicPlayer/src/main/L2-5.mp4").getAbsolutePath();
-            me = new Media(new File(path).toURI().toString());
-            mp = new MediaPlayer(me);
-            //mv.setMediaPlayer(mp);
-            mp.setAutoPlay(false);
+            //me = new Media(new File(songPath).toURI().toString());
+            //mp = new MediaPlayer(me);
+            //mp.setAutoPlay(false);
+            //duration = mp.getMedia().getDuration();
 
             // for duck event, bubble is visible when duckClickEvent is called
             bubble.setVisible(false);
 
-            // omit the progressBar feature for now, will implement after
-            progress.setVisible(false);
+            slider.setStyle("-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C");
+            slider.valueProperty().addListener(new InvalidationListener() {
+                public void invalidated(Observable ov) {
+                    //if (!duration.isIndefinite() && !duration.isUnknown()) {
+                        if (slider.isValueChanging()) {
+                            // multiply duration by percentage calculated by slider position
+                            // mp.seek(duration.multiply(slider.getValue() / 100.0));
+
+                            // ---------------
+                            System.out.println("*****" + slider.getValue() + "*******");
+                            // ---------------
+                        }
+                    //}
+                }
+            });
         }
         catch (Exception e) {
             System.out.println("some error occurred");
@@ -95,6 +113,11 @@ public class Controller implements Initializable {
             {
                 System.out.println(selectedDirec.getName());
                 mediaList = new MediaList(selectedDirec);
+                songName = mediaList.getSongName();
+                songPath = mediaList.getSongPath();
+                me = new Media(new File(songPath).toURI().toString());
+                mp = new MediaPlayer(me);
+                duration = mp.getMedia().getDuration();
             }
             else
             {
@@ -115,52 +138,48 @@ public class Controller implements Initializable {
             playStatus = 0;
         }
         else {
-            songPath = mediaList.getSongPath();
-            songName = mediaList.getSongName();
-            if (songPath == "" || songName == "") {
-                AlertWindow aw = new AlertWindow();
-                aw.display("Error", "No song selected.");
-            }
-            else {
-                me = new Media(new File(songPath).toURI().toString());
-                mp = new MediaPlayer(me);
-                mp.play();
-
-                message.setText("Playing: " + songName);
-                playStatus = 1;
-            }
+            /*
+            ***********************************
+            * if the current song is at the end
+            * ( this is possible if the usr drag the slider to the end )
+            * then play next song
+            *
+            * if the current song is not at the end execute the following command
+             */
+            playSong(0);
         }
     }
 
     // goes to the next song in the directory
     // if the current song is the last song in the directory, an albert box appears
     public void nextClickEvent(MouseEvent mouseEvent) {
-        mediaList.incCurnInd();
-        songPath = mediaList.getSongPath();
-        songName = mediaList.getSongName();
-        if (songPath == "" || songName == "") {
-            AlertWindow aw = new AlertWindow();
-            aw.display("Error", "No song to play next.");
-        }
-        else {
-            me = new Media(new File(songPath).toURI().toString());
-            mp = new MediaPlayer(me);
-            mp.play();
-
-            message.setText("Playing: " + songName);
-            playStatus = 1;
-        }
+       playSong(1);
     }
 
     // goes to the previous song in the directory
     // if the current song is the first song, then an albert box appears
     public void previousClickEvent(MouseEvent mouseEvent) {
-        mediaList.decCurnInd();
-        songPath = mediaList.getSongPath();
-        songName = mediaList.getSongName();
+        playSong(-1);
+    }
+
+    public void playSong(int indChange)
+    {
+        mediaList.changeCurnInd(indChange);
+        if (indChange != 0) {
+            songPath = mediaList.getSongPath();
+            songName = mediaList.getSongName();
+        }
         if (songPath == "" || songName == "") {
             AlertWindow aw = new AlertWindow();
-            aw.display("Error", "No previous song to be played.");
+            if (indChange == -1) {
+                aw.display("Error", "No previous song to be played.");
+            }
+            else if (indChange == 1) {
+                aw.display("Error", "No song to be played next.");
+            }
+            else {
+                aw.display("Error", "No song selected");
+            }
         }
         else {
             me = new Media(new File(songPath).toURI().toString());
@@ -184,6 +203,8 @@ public class Controller implements Initializable {
         }
     }
 
+
+
     // move the window
     private double xChange = 0;
     private double yChange = 0;
@@ -198,6 +219,5 @@ public class Controller implements Initializable {
         xChange = mouseEvent.getSceneX();
         yChange = mouseEvent.getSceneY();
     }
-
 
 }
