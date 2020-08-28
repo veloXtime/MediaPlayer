@@ -14,5 +14,5 @@ Supported media formats see
 
 ## ScreenShot
 
-![GUI](screenshot/screenshot.png | width = 100)
+![GUI](screenshot/screenshot.png | width=100px)
 
