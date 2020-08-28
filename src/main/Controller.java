@@ -16,13 +16,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-
-
 
 public class Controller implements Initializable {
 
@@ -42,10 +37,13 @@ public class Controller implements Initializable {
 
     private MediaPlayer mp;
     private Media me;
-    private String path = new File("/Users/velox/Desktop/MusicPlayer/src/main/L2-5.mp4").getAbsolutePath();
+    private String path = new File("/Users/velox/Desktop/MusicPlayer/src/main/resources/media/L2-5.mp4").getAbsolutePath();
+
     private int playStatus = 0;
-    private String song = "hello";
     private int infoStatus = 0;
+    private String songName = "";
+    private String songPath = "";
+    private MediaList mediaList;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -57,80 +55,124 @@ public class Controller implements Initializable {
             //mv.setMediaPlayer(mp);
             mp.setAutoPlay(false);
 
+            // for duck event, bubble is visible when duckClickEvent is called
             bubble.setVisible(false);
 
-            System.out.println(path);
+            // omit the progressBar feature for now, will implement after
+            progress.setVisible(false);
         }
         catch (Exception e) {
-            System.out.println("error occured");
+            System.out.println("some error occurred");
         }
     }
+
+
+
 
     public void duckClickEvent(MouseEvent mouseEvent) {
-        if (infoStatus == 1) {
+        if (infoStatus == 0) {
+        // if the bubble is currently invisible
+            bubble.setVisible(true);
+            infoStatus = 1;
+        }
+        else {
             bubble.setVisible(false);
             infoStatus = 0;
-            System.out.println("hello world");
-        }
-        else {
-            info.setText("");
-            infoStatus = 1;
-            bubble.setVisible(true);
-            System.out.println("hello world");
         }
     }
 
-
-    public void playClickAction(MouseEvent mouseEvent) {
-        if (playStatus == 1) {
-            mp.pause();
-            playStatus = 0;
-            message.setText("Paused: " + song);
-        }
-        else {
-            me = new Media(new File(path).toURI().toString());
-            mp = new MediaPlayer(me);
-            mp.setAutoPlay(false);
-
-            // ----------------------------
-            System.out.println(path);
-            // ----------------------------
-
-            mp.play();
-            playStatus = 1;
-            message.setText("Playing: " + song);
-        }
-    }
 
     // choose song
     public void menuClickEvent(MouseEvent mouseEvent) {
-        DirectoryChooser direcChooser = new DirectoryChooser();
-        direcChooser.setTitle("Open Media File");
-        Stage stage = (Stage) background.getScene().getWindow();
-        File selectedDirectory = direcChooser.showDialog(stage);
-        System.out.println(selectedDirectory.getName());
+        try {
+            DirectoryChooser direcChooser = new DirectoryChooser();
+            direcChooser.setTitle("Open Media File");
 
-        String direcPath = "~/Desktop/MusicPlayer/src/main/";
-        if (selectedDirectory != null) {
-            direcPath = selectedDirectory.getAbsolutePath();
-        }
+            Stage stage = (Stage) background.getScene().getWindow();
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(selectedDirectory);
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("ALL MEDIA", "*.*"),
-                new FileChooser.ExtensionFilter("MP4", "*.mp4"),
-                new FileChooser.ExtensionFilter("MP3", "*.mp3"),
-                new FileChooser.ExtensionFilter("WAV", "*.wav")
-        );
-        //File file = fileChooser.showOpenDialog(stage);
-        /*
-        if (file != null) {
-            song = file.getName();
-            path = file.getPath();
+            File selectedDirec = direcChooser.showDialog(stage);
+            if (selectedDirec != null)
+            {
+                System.out.println(selectedDirec.getName());
+                mediaList = new MediaList(selectedDirec);
+            }
+            else
+            {
+                System.out.println("WARNING: no directory selected.");
+            }
         }
-        */
+        catch (Exception e) {
+            System.out.println("EXCEPTION THROWN: error occurred");
+        }
     }
+
+    // plays the current song
+    // if the song is an invalid file type, then albert box appears
+    public void playClickAction(MouseEvent mouseEvent) {
+        if (playStatus == 1) {
+            mp.pause();
+            message.setText("Paused: " + songName);
+            playStatus = 0;
+        }
+        else {
+            songPath = mediaList.getSongPath();
+            songName = mediaList.getSongName();
+            if (songPath == "" || songName == "") {
+                AlertWindow aw = new AlertWindow();
+                aw.display("Error", "No song selected.");
+            }
+            else {
+                me = new Media(new File(songPath).toURI().toString());
+                mp = new MediaPlayer(me);
+                mp.play();
+
+                message.setText("Playing: " + songName);
+                playStatus = 1;
+            }
+        }
+    }
+
+    // goes to the next song in the directory
+    // if the current song is the last song in the directory, an albert box appears
+    public void nextClickEvent(MouseEvent mouseEvent) {
+        mediaList.incCurnInd();
+        songPath = mediaList.getSongPath();
+        songName = mediaList.getSongName();
+        if (songPath == "" || songName == "") {
+            AlertWindow aw = new AlertWindow();
+            aw.display("Error", "No song to play next.");
+        }
+        else {
+            me = new Media(new File(songPath).toURI().toString());
+            mp = new MediaPlayer(me);
+            mp.play();
+
+            message.setText("Playing: " + songName);
+            playStatus = 1;
+        }
+    }
+
+    // goes to the previous song in the directory
+    // if the current song is the first song, then an albert box appears
+    public void previousClickEvent(MouseEvent mouseEvent) {
+        mediaList.decCurnInd();
+        songPath = mediaList.getSongPath();
+        songName = mediaList.getSongName();
+        if (songPath == "" || songName == "") {
+            AlertWindow aw = new AlertWindow();
+            aw.display("Error", "No previous song to be played.");
+        }
+        else {
+            me = new Media(new File(songPath).toURI().toString());
+            mp = new MediaPlayer(me);
+            mp.play();
+
+            message.setText("Playing: " + songName);
+            playStatus = 1;
+        }
+    }
+
+
 
     // confirm exit
     public void closeClickEvent(MouseEvent mouseEvent) {
@@ -156,4 +198,6 @@ public class Controller implements Initializable {
         xChange = mouseEvent.getSceneX();
         yChange = mouseEvent.getSceneY();
     }
+
+
 }
