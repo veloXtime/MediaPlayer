@@ -3,18 +3,17 @@ package main;
 import com.jfoenix.controls.JFXSlider;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -45,45 +44,76 @@ public class Controller implements Initializable {
 
     private MediaPlayer mp;
     private Media me;
-    private int playStatus = 0;
+    private boolean playing = false;
     private int infoStatus = 0;
     private String songName = "";
     private String songPath = "";
-    private MediaList mediaList;
+    private MediaList mediaList = null;
+    private String path = "/Users/velox/Desktop/MusicPlayer/src/main/resources/media/L2-5.mp4";
+
     private Duration duration;
+    private static final double MIN_CHANGE = 0.5 ;
+    private final boolean repeat = false;
+    private boolean stopRequested = false;
+    private boolean atEndOfMedia = false;
+    private Label playTime;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            //me = new Media(new File(songPath).toURI().toString());
-            //mp = new MediaPlayer(me);
-            //mp.setAutoPlay(false);
-            //duration = mp.getMedia().getDuration();
-
             // for duck event, bubble is visible when duckClickEvent is called
             bubble.setVisible(false);
 
-            slider.setStyle("-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C");
-            slider.valueProperty().addListener(new InvalidationListener() {
-                public void invalidated(Observable ov) {
-                    //if (!duration.isIndefinite() && !duration.isUnknown()) {
-                        if (slider.isValueChanging()) {
-                            // multiply duration by percentage calculated by slider position
-                            // mp.seek(duration.multiply(slider.getValue() / 100.0));
+            me = new Media(new File(path).toURI().toString());
+            mp = new MediaPlayer(me);
+            mp.setAutoPlay(false);
+            duration = mp.getMedia().getDuration();
 
-                            // ---------------
-                            System.out.println("*****" + slider.getValue() + "*******");
-                            // ---------------
-                        }
-                    //}
+            mp.currentTimeProperty().addListener(new ChangeListener<Duration>() {
+                @Override
+                public void changed(ObservableValue<? extends Duration> observableValue, Duration duration, Duration t1) {
+                    slider.setValue(t1.toSeconds());
                 }
             });
+
+            slider.setOnMouseReleased(event -> mp.seek(Duration.seconds(slider.getValue())));
+            slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                int seconds = (int) slider.getValue() % 60;
+                int minutes = (int) slider.getValue() / 60;
+                String time = String.format("%02d:%02d", minutes, seconds);
+            });
+
+            slider.setStyle("-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C");
+
+            slider.valueProperty().addListener(new InvalidationListener() {
+                public void invalidated(Observable ov) {
+                    if (slider.isValueChanging()) {
+                        // multiply duration by percentage calculated by slider position
+                        mp.seek(duration.multiply(slider.getValue() / 100.0));
+                    }
+                }
+            });
+
+            slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+                if (! isChanging) {
+                    mp.seek(Duration.seconds(slider.getValue()));
+                }
+            });
+
+            slider.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (! slider.isValueChanging()) {
+                    double currentTime = mp.getCurrentTime().toSeconds();
+                    if (Math.abs(currentTime - newValue.doubleValue()) > MIN_CHANGE) {
+                        mp.seek(Duration.seconds(newValue.doubleValue()));
+                    }
+                }
+            });
+            mp.play();
         }
         catch (Exception e) {
             System.out.println("some error occurred");
         }
     }
-
 
 
 
@@ -132,10 +162,10 @@ public class Controller implements Initializable {
     // plays the current song
     // if the song is an invalid file type, then albert box appears
     public void playClickAction(MouseEvent mouseEvent) {
-        if (playStatus == 1) {
+        if (playing) {
             mp.pause();
             message.setText("Paused: " + songName);
-            playStatus = 0;
+            playing = false;
         }
         else {
             /*
@@ -164,6 +194,13 @@ public class Controller implements Initializable {
 
     public void playSong(int indChange)
     {
+        mp.pause();
+        if (mediaList == null)
+        {
+            AlertWindow aw = new AlertWindow();
+            aw.display("Error", "No song selected");
+            return;
+        }
         mediaList.changeCurnInd(indChange);
         if (indChange != 0) {
             songPath = mediaList.getSongPath();
@@ -184,10 +221,25 @@ public class Controller implements Initializable {
         else {
             me = new Media(new File(songPath).toURI().toString());
             mp = new MediaPlayer(me);
+            mp.setAutoPlay(false);
             mp.play();
 
             message.setText("Playing: " + songName);
-            playStatus = 1;
+            playing = true;
+            slider.valueProperty().addListener(new InvalidationListener() {
+                public void invalidated(Observable ov) {
+                    if (slider.isValueChanging()) {
+                        // multiply duration by percentage calculated by slider position
+                        mp.seek(duration.multiply(slider.getValue() / 100.0));
+                    }
+                }
+            });
+
+            slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+                if (! isChanging) {
+                    mp.seek(Duration.seconds(slider.getValue()));
+                }
+            });
         }
     }
 
