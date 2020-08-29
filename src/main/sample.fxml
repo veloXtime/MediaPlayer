@@ -60,8 +60,8 @@
                </children>
             </Pane>
             <JFXSlider fx:id="slider" layoutX="73.0" layoutY="534.0" prefHeight="24.0" prefWidth="192.0" style="-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C" value="0.0" />
-            <Label fx:id="totalTime" alignment="CENTER" layoutX="266.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
-            <Label fx:id="curnTime" alignment="CENTER" layoutX="11.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
+            <Label fx:id="totalTime" alignment="CENTER" layoutX="266.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="00:00" />
+            <Label fx:id="curnTime" alignment="CENTER" layoutX="11.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="00:00" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

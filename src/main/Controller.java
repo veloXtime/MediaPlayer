@@ -53,7 +53,6 @@ public class Controller implements Initializable {
     private String songName = "";
     private String songPath = "";
     private MediaList mediaList = null;
-    private String path = "/Users/velox/Desktop/MusicPlayer/src/main/resources/media/L2-5.mp4";
 
     private Duration duration;
     private static final double MIN_CHANGE = 0.5 ;
@@ -71,11 +70,6 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             bubble.setVisible(false);
-            me = new Media(new File(path).toURI().toString());
-            mp = new MediaPlayer(me);
-            mp.play();
-            duration = mp.getMedia().getDuration();
-            setListeners();
         }
         catch (Exception e) {
             System.out.println("error occurred");
@@ -83,11 +77,20 @@ public class Controller implements Initializable {
     }
 
     public void setListeners() {
+        totalTime.setText(formatTime(mp.getTotalDuration().toSeconds()));
+        curnTime.setText("00:00");
+
         slider.valueProperty().addListener(new InvalidationListener() {
             public void invalidated(Observable ov) {
                 if (slider.isValueChanging()) {
                     mp.seek(duration.multiply(slider.getValue() / 100.0));
                 }
+            }
+        });
+
+        slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
+            if (! isChanging) {
+                mp.seek(Duration.seconds(slider.getValue() / 100 * mp.getTotalDuration().toSeconds()));
             }
         });
 
@@ -99,12 +102,6 @@ public class Controller implements Initializable {
                 totalTime.setText(formatTime(mp.getTotalDuration().toSeconds()));
                 curnTime.setText(formatTime(t1.toSeconds()));
                 System.out.println(totalTime.getText());
-            }
-        });
-
-        slider.valueChangingProperty().addListener((obs, wasChanging, isChanging) -> {
-            if (! isChanging) {
-                mp.seek(Duration.seconds(slider.getValue() / 100 * mp.getTotalDuration().toSeconds()));
             }
         });
     }
@@ -172,44 +169,21 @@ public class Controller implements Initializable {
         }
     }
 
-    public boolean setupSong() {
-        // here the mediaList is already setup
-        songName = mediaList.getSongName();
-        songPath = mediaList.getSongPath();
-
-        if (songPath.equals("") || songName.equals("")) return false;
-
-        me = new Media(songPath);
-        mp = new MediaPlayer(me);
-
-        mp.setCycleCount(repeat ? MediaPlayer.INDEFINITE : 1);
-
-        mp.setOnEndOfMedia(new Runnable() {
-            public void run() {
-                    stopRequested = true;
-                    atEndOfMedia = true;
-                    System.out.println("end of media reached");
-            }
-        });
-
-        duration = mp.getMedia().getDuration();
-        setListeners();
-        message.setText("Playing: " + songName);
-        return true;
-    }
-
     public void playSong(int indChange) {
-        mp.stop();
-        sliderClock(false);
-
         if (mediaList == null) {
             AlertWindow aw = new AlertWindow();
             aw.display("Error", "No song selected");
             return;
         }
-
+        if (mp != null) {
+            mp.stop();
+            sliderClock(false);
+        }
         mediaList.changeCurnInd(indChange);
-        if (!setupSong()) {
+        songName = mediaList.getSongName();
+        songPath = mediaList.getSongPath();
+
+        if (songPath.equals("") || songName.equals("")) {
             String message;
             switch (indChange) {
                 case -1:
@@ -229,13 +203,25 @@ public class Controller implements Initializable {
             aw.display("Error", message);
             mediaList.changeCurnInd(-1 * indChange);
         }
-        else {
-            // mp.setAutoPlay(false);
-            mp.play();
-            sliderClock(true);
-            playing = true;
-            System.out.println(mp.getStatus());
+        else if (indChange != 0 || mp == null) {
+            me = new Media(songPath);
+            mp = new MediaPlayer(me);
+
+            mp.setOnEndOfMedia(new Runnable() {
+                public void run() {
+                    atEndOfMedia = true;
+                    //System.out.println("end of media reached");
+                    playSong(1);
+                }
+            });
+
+            duration = mp.getMedia().getDuration();
+            setListeners();
         }
+        message.setText("Playing: " + songName);
+        mp.play();
+        sliderClock(true);
+        playing = true;
     }
 
     public void playClickAction(MouseEvent mouseEvent) {
