@@ -13,17 +13,17 @@
    <children>
       <AnchorPane fx:id="background" onMouseDragged="#windowDragEvent" onMousePressed="#windowPressEvent" prefHeight="610.0" prefWidth="338.0" style="-fx-background-color: #6BA4B8;">
          <children>
-            <ImageView id="playIcon" fx:id="play" fitHeight="28.0" fitWidth="28.0" layoutX="156.0" layoutY="489.0" onMouseClicked="#playClickAction">
+            <ImageView id="playIcon" fx:id="play" fitHeight="28.0" fitWidth="28.0" layoutX="157.0" layoutY="489.0" onMouseClicked="#playClickAction">
                <image>
                   <Image url="@resources/images/play.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="next" fitHeight="28.0" fitWidth="28.0" layoutX="223.0" layoutY="489.0" onMouseClicked="#nextClickEvent">
+            <ImageView fx:id="next" fitHeight="28.0" fitWidth="28.0" layoutX="216.0" layoutY="489.0" onMouseClicked="#nextClickEvent">
                <image>
                   <Image url="@resources/images/rightarrow.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="last" fitHeight="28.0" fitWidth="28.0" layoutX="85.0" layoutY="490.0" onMouseClicked="#previousClickEvent">
+            <ImageView fx:id="last" fitHeight="28.0" fitWidth="28.0" layoutX="93.0" layoutY="490.0" onMouseClicked="#previousClickEvent">
                <image>
                   <Image url="@resources/images/leftarrow.png" />
                </image>
@@ -59,7 +59,9 @@
                   </ImageView>
                </children>
             </Pane>
-            <JFXSlider fx:id="slider" layoutX="74.0" layoutY="534.0" prefHeight="24.0" prefWidth="192.0" value="0.0" />
+            <JFXSlider fx:id="slider" layoutX="73.0" layoutY="534.0" prefHeight="24.0" prefWidth="192.0" style="-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C" value="0.0" />
+            <Label fx:id="totalTime" alignment="CENTER" layoutX="266.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
+            <Label fx:id="curnTime" alignment="CENTER" layoutX="11.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
          </children></AnchorPane>
    </children>
 </AnchorPane>

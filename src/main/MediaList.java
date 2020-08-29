@@ -53,7 +53,7 @@ public class MediaList {
         if (testValidity()) {
             System.out.println(curnInd);
             System.out.println(mediaList.size());
-            return mediaList.get(curnInd).getAbsolutePath();
+            return mediaList.get(curnInd).toURI().toString();
         }
         return "";
     }
