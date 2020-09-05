@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
@@ -29,6 +30,7 @@ import java.util.TimerTask;
 
 public class Controller implements Initializable {
 
+    @FXML private ImageView pause;
     @FXML private Label totalTime;
     @FXML private Label curnTime;
     @FXML private JFXSlider slider;
@@ -43,8 +45,6 @@ public class Controller implements Initializable {
     @FXML private ImageView bubble;
     @FXML private ProgressBar progress;
     @FXML private Label message;
-    @FXML private Label info;
-    @FXML private MediaView mv;
 
     private MediaPlayer mp;
     private Media me;
@@ -53,29 +53,23 @@ public class Controller implements Initializable {
     private String songName = "";
     private String songPath = "";
     private MediaList mediaList = null;
-    private String path = "/Users/velox/Desktop/MusicPlayer/src/main/resources/media/L2-5.mp4";
 
     private Duration duration;
-    private static final double MIN_CHANGE = 0.5 ;
-    private final boolean repeat = false;
-    private boolean stopRequested = false;
-    private boolean atEndOfMedia = false;
     private Label playTime;
     private Timer timer;
     private TimerTask timerTask;
-
-
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             bubble.setVisible(false);
-            me = new Media(new File(path).toURI().toString());
-            mp = new MediaPlayer(me);
-            mp.play();
-            duration = mp.getMedia().getDuration();
-            setListeners();
+            pause.setVisible(false);
+            //me = new Media(new File(path).toURI().toString());
+            //mp = new MediaPlayer(me);
+            //mp.play();
+            //duration = mp.getMedia().getDuration();
+            //setListeners();
         }
         catch (Exception e) {
             System.out.println("error occurred");
@@ -95,10 +89,9 @@ public class Controller implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Duration> observableValue, Duration duration, Duration t1) {
                 if (!slider.isValueChanging())
-                    slider.setValue(t1.toSeconds() / mp.getTotalDuration().toSeconds() * 100);
+                    slider.setValue((double)(t1.toSeconds()) / (double) (mp.getTotalDuration().toSeconds()) * 100.0);
                 totalTime.setText(formatTime(mp.getTotalDuration().toSeconds()));
                 curnTime.setText(formatTime(t1.toSeconds()));
-                System.out.println(totalTime.getText());
             }
         });
 
@@ -147,10 +140,12 @@ public class Controller implements Initializable {
     }
 
 
+
     public void duckClickEvent(MouseEvent mouseEvent) {
         bubble.setVisible(!displaying);
         displaying = !displaying;
     }
+
 
     // import songs by clicking on menu icon
     public void menuClickEvent(MouseEvent mouseEvent) {
@@ -160,8 +155,8 @@ public class Controller implements Initializable {
             Stage stage = (Stage) background.getScene().getWindow();
             File selectedDirec = direcChooser.showDialog(stage);
             if (selectedDirec != null) {
-                System.out.println(selectedDirec.getName());
                 mediaList = new MediaList(selectedDirec);
+                playSong(0);
             }
             else {
                 System.out.println("WARNING: no directory selected.");
@@ -172,44 +167,8 @@ public class Controller implements Initializable {
         }
     }
 
-    public boolean setupSong() {
-        // here the mediaList is already setup
-        songName = mediaList.getSongName();
-        songPath = mediaList.getSongPath();
-
-        if (songPath.equals("") || songName.equals("")) return false;
-
-        me = new Media(songPath);
-        mp = new MediaPlayer(me);
-
-        mp.setCycleCount(repeat ? MediaPlayer.INDEFINITE : 1);
-
-        mp.setOnEndOfMedia(new Runnable() {
-            public void run() {
-                    stopRequested = true;
-                    atEndOfMedia = true;
-                    System.out.println("end of media reached");
-            }
-        });
-
-        duration = mp.getMedia().getDuration();
-        setListeners();
-        message.setText("Playing: " + songName);
-        return true;
-    }
-
-    public void playSong(int indChange) {
-        mp.stop();
-        sliderClock(false);
-
-        if (mediaList == null) {
-            AlertWindow aw = new AlertWindow();
-            aw.display("Error", "No song selected");
-            return;
-        }
-
-        mediaList.changeCurnInd(indChange);
-        if (!setupSong()) {
+    public void playNullError(int indChange) {
+        if (songPath.equals("") || songName.equals("")) {
             String message;
             switch (indChange) {
                 case -1:
@@ -227,36 +186,71 @@ public class Controller implements Initializable {
             }
             AlertWindow aw = new AlertWindow();
             aw.display("Error", message);
+        }
+    }
+
+    public void playSong(int indChange) {
+        if (mediaList == null) {
+            AlertWindow aw = new AlertWindow();
+            aw.display("Error", "No song selected");
+            return;
+        }
+        //  if (mp != null) { mp.stop(); }
+
+        mediaList.changeCurnInd(indChange);
+
+        songName = mediaList.getSongName();
+        songPath = mediaList.getSongPath();
+
+        if (songPath.equals("") || songName.equals("")) {
+            playNullError(indChange);
             mediaList.changeCurnInd(-1 * indChange);
+            return;
         }
-        else {
-            // mp.setAutoPlay(false);
-            mp.play();
-            sliderClock(true);
-            playing = true;
-            System.out.println(mp.getStatus());
+        else if (indChange != 0 || mp == null) {
+            if (mp != null) { mp.stop(); }
+            me = new Media(songPath);
+            mp = new MediaPlayer(me);
+            duration = mp.getMedia().getDuration();
+            // System.out.println(duration);
+            setListeners();
         }
+        message.setText("Playing: " + songName);
+        // sliderClock(true);
+        mp.play();
+        playing = true;
     }
 
     public void playClickAction(MouseEvent mouseEvent) {
         if (playing) {
             mp.pause();
+            play.setVisible(false);
+            pause.setVisible(true);
             message.setText("Paused: " + songName);
             playing = false;
-            sliderClock(false);
+            // sliderClock(false);
         }
         else {
+            play.setVisible(true);
+            pause.setVisible(false);
             playSong(0);
         }
     }
 
     public void nextClickEvent(MouseEvent mouseEvent) {
-       playSong(1);
+        play.setVisible(true);
+        pause.setVisible(false);
+        playSong(1);
     }
 
     public void previousClickEvent(MouseEvent mouseEvent) {
+        play.setVisible(true);
+        pause.setVisible(false);
         playSong(-1);
     }
+
+
+
 
     public void closeClickEvent(MouseEvent mouseEvent) {
         ConfirmWindow cw = new ConfirmWindow();

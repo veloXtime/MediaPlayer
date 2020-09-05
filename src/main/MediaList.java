@@ -21,7 +21,8 @@ public class MediaList {
             File [] files = selectedDirec.listFiles();
             for (File f : files) {
                 String filePath = f.getAbsolutePath();
-                if (filePath.endsWith(".mp3") || filePath.endsWith(".mp4") || filePath.endsWith(".wav")) {
+                if (filePath.endsWith(".mp3") || filePath.endsWith(".mp4") || filePath.endsWith(".wav")
+                || filePath.endsWith(".m4a") || filePath.endsWith(".m4v")) {
                     mediaList.add(f);
                 }
             }
@@ -51,8 +52,6 @@ public class MediaList {
 
     public String getSongPath() {
         if (testValidity()) {
-            System.out.println(curnInd);
-            System.out.println(mediaList.size());
             return mediaList.get(curnInd).toURI().toString();
         }
         return "";
@@ -63,9 +62,6 @@ public class MediaList {
     }
 
     public boolean testValidity() {
-        if (curnInd < mediaList.size() && curnInd >= 0) {
-            return true;
-        }
-        return false;
+        return (curnInd < mediaList.size() && curnInd >= 0);
     }
 }

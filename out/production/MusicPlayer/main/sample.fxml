@@ -18,6 +18,11 @@
                   <Image url="@resources/images/play.png" />
                </image>
             </ImageView>
+            <ImageView id="pause" fx:id="pause" fitHeight="22.0" fitWidth="32.0" layoutX="154.0" layoutY="492.0" onMouseClicked="#playClickAction">
+               <image>
+                  <Image url="@resources/images/pause.png" />
+               </image>
+            </ImageView>
             <ImageView fx:id="next" fitHeight="28.0" fitWidth="28.0" layoutX="216.0" layoutY="489.0" onMouseClicked="#nextClickEvent">
                <image>
                   <Image url="@resources/images/rightarrow.png" />
@@ -28,7 +33,7 @@
                   <Image url="@resources/images/leftarrow.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="menu" fitHeight="28.0" fitWidth="28.0" layoutX="14.0" layoutY="14.0" onMouseClicked="#menuClickEvent">
+            <ImageView fx:id="menu" fitHeight="24.0" fitWidth="22.0" layoutX="20.0" layoutY="16.0" onMouseClicked="#menuClickEvent">
                <image>
                   <Image url="@resources/images/headlines.png" />
                </image>
@@ -60,8 +65,8 @@
                </children>
             </Pane>
             <JFXSlider fx:id="slider" layoutX="73.0" layoutY="534.0" prefHeight="24.0" prefWidth="192.0" style="-jfx-default-track: #659AB1; -jfx-default-thumb: #F2C75C" value="0.0" />
-            <Label fx:id="totalTime" alignment="CENTER" layoutX="266.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
-            <Label fx:id="curnTime" alignment="CENTER" layoutX="11.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="Label" />
+            <Label fx:id="totalTime" alignment="CENTER" layoutX="266.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="00:00" />
+            <Label fx:id="curnTime" alignment="CENTER" layoutX="11.0" layoutY="537.0" prefHeight="18.0" prefWidth="61.0" text="00:00" />
          </children></AnchorPane>
    </children>
 </AnchorPane>
