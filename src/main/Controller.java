@@ -141,6 +141,11 @@ public class Controller implements Initializable {
         displaying = !displaying;
     }
 
+    public void changePlayButton(boolean status) {
+            pause.setVisible(status);
+            play.setVisible(!status);
+    }
+
 
     // import songs by clicking on menu icon
     public void menuClickEvent(MouseEvent mouseEvent) {
@@ -152,6 +157,7 @@ public class Controller implements Initializable {
             if (selectedDirec != null) {
                 mediaList = new MediaList(selectedDirec);
                 playSong(0);
+                changePlayButton(true);
             }
             else {
                 System.out.println("WARNING: no directory selected.");
@@ -219,28 +225,24 @@ public class Controller implements Initializable {
     public void playClickAction(MouseEvent mouseEvent) {
         if (playing) {
             mp.pause();
-            play.setVisible(false);
-            pause.setVisible(true);
+            changePlayButton(false);
             message.setText("Paused: " + songName);
             playing = false;
             // sliderClock(false);
         }
         else {
-            play.setVisible(true);
-            pause.setVisible(false);
+            changePlayButton(true);
             playSong(0);
         }
     }
 
     public void nextClickEvent(MouseEvent mouseEvent) {
-        play.setVisible(true);
-        pause.setVisible(false);
+        changePlayButton(true);
         playSong(1);
     }
 
     public void previousClickEvent(MouseEvent mouseEvent) {
-        play.setVisible(true);
-        pause.setVisible(false);
+        changePlayButton(true);
         playSong(-1);
     }
 
