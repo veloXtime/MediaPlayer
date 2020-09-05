@@ -12,3 +12,8 @@ For supported media formats see
 
 <img src="https://github.com/veloXtime/MusicPlayer/blob/master/screenshot/screenshot.png" width="300" height="auto">
 
+
+## Demo
+
+<img src="https://github.com/veloXtime/MusicPlayer/blob/master/screenshot/demo.gif" width="300" height="auto">
+
