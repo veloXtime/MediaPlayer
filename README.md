@@ -19,7 +19,7 @@ Our Music Player supports the following media file types:
 For supported media formats see
 [JavaFX supported media formats](https://docs.oracle.com/javafx/2/api/javafx/scene/media/package-summary.html#SupportedMediaTypes)
 
-Note: javafx support for mp3 MPG is bad, may solve this problem if have time...
+Note: javafx has undefined behaviour when playing the MPEG ADT format of mp3 files.
 
 
 
